@@ -29,6 +29,13 @@ function register_user($email, $password)
 
 }
 
+/*
+Возвращает:
+1.  "success_admin" - если залогинился админ
+2.  "success_user" - если залогинился user
+3.  "password_incorrect" - если пароль неверный
+4.  "email_incorrect" - если email неверный
+*/
 function login($email, $password)
 {
     // Search email in BD
@@ -37,7 +44,6 @@ function login($email, $password)
     $check = $pdo->prepare($sql);
     $check->execute([':email' => $email]);
     $result = $check->fetch(PDO::FETCH_ASSOC);
-
 
     // If email exist -> compare password and hashed_password:
 
@@ -51,28 +57,27 @@ function login($email, $password)
             // Set $_SESSION['admin'] if admin
             if (($result['is_admin']) === 'admin') {
                 $_SESSION['admin'] = true;
-                header("location: users.php");
-                exit;
+                return "success_admin";
+
             }
             // if not admin
             unset($_SESSION['admin']);
-            header("location: users.php");
-            exit;
+            return "success_user";
+
             // if password incorrect
         } else $_SESSION['message'] = "Password incorrect";
         $_SESSION['color'] = "danger";
-        header("location: page_login.php");
-        exit;
+        return "password_incorrect";
+
         // if email incorrect
     } else $_SESSION['message'] = "Incorrect email";
     $_SESSION['color'] = "danger";
-    header("location: page_login.php");
-    exit;
+    return "email_incorrect";
 }
 
 /*
 Передать нужно $_FILES['filename']['name'] || имя файла
-$directory_path = '/Users/YDrake21/Downloads/drive-download-20240328T113025Z-001/uploads/';
+$directory_path = '/Users/YDrake21/Downloads/Погружение/Верстка проекта/images';
 */
 function upload_avatar($filename, $directory_path)
 {
