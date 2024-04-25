@@ -30,6 +30,7 @@ function register_user($email, $password)
 }
 
 /*
+ * Функция использует $_SESSION()
 Возвращает:
 1.  "success_admin" - если залогинился админ
 2.  "success_user" - если залогинился user
@@ -76,8 +77,9 @@ function login($email, $password)
 }
 
 /*
+ * Работает с множественным выделением
 Передать нужно $_FILES['filename']['name'] || имя файла
-$directory_path = '/Users/YDrake21/Downloads/Погружение/Верстка проекта/images';
+$directory_path = '/Users/YDrake21/Downloads/Погружение/Верстка проекта/images'
 */
 function upload_avatar($filename, $directory_path)
 {
@@ -110,5 +112,5 @@ function upload_avatar($filename, $directory_path)
         $check = $pdo->prepare($sql);
         $check->execute([':File_name' => $new_filename]);
     }
-    return "ok";
+
 }

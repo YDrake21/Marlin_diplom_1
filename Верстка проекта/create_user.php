@@ -1,4 +1,13 @@
 <!DOCTYPE html>
+<!-- Если не залогинен - на страницу логина -->
+<?php
+session_start();
+if (!isset($_COOKIE['user_id']) or (!isset($_SESSION['admin']))) {
+    header("location: page_login.php");
+    exit;
+
+}
+?>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -41,6 +50,14 @@
 
 
         </div>
+        <?php if (isset($_SESSION['message'])): ?>
+
+            <!--Flash-message if Email exist -->
+            <div class="alert alert-<?php echo $_SESSION['color'] ?>">
+                <?php echo $_SESSION['message'] ?>
+            </div>
+            <?php unset($_SESSION['color']);
+            unset($_SESSION['message']); endif; ?>
         <form action="create_user_handler.php" method="post" enctype="multipart/form-data">
             <div class="row">
                 <div class="col-xl-6">
