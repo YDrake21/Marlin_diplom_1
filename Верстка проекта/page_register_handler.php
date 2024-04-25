@@ -1,28 +1,22 @@
 <?php
 session_start();
+require_once 'functions.php';
 
-//Connect to DataBase
-$pdo = new PDO("mysql:host=localhost;dbname=study;", 'root', 'root');
+$result = register_user($_POST['email'], $_POST['password']);
 
-$email = $_POST['email'];
-$password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-
-
-$sql = "SELECT `email` FROM `diplom_1` WHERE `email` =:email";
-$check = $pdo->prepare($sql);
-$check->execute([':email' => $email]);
-$result = $check->fetch(PDO::FETCH_ASSOC);
-
-if (!$result) {
-    $sql = "INSERT INTO `diplom_1`(`email`, `password`) VALUES (:email, :password)";
-    $check = $pdo->prepare($sql);
-    $check->execute([':email' => $email, ':password' => $password]);
+if (is_int($result)) {
     $_SESSION['message'] = 'Регистрация успешна';
     $_SESSION['color'] = 'success';
     header("location: page_login.php");
-    exit;
+}
+else if ($result == 'Email exists') {
+    $_SESSION['message'] = "<strong>Уведомление!</strong> Этот эл. адрес уже занят другим пользователем.";
+    header("location: page_register.php");
+}
 
-} else ($_SESSION['message'] = "<strong>Уведомление!</strong> Этот эл. адрес уже занят другим пользователем.");
-header("location: page_register.php");
+else echo "Ошибка создания пользователя:" . var_dump(register_user($_POST['email'], $_POST['password']));
 
-var_dump($result);
+
+
+
+

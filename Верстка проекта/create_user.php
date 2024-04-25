@@ -41,7 +41,7 @@
 
 
         </div>
-        <form action="handler_create_user.php" method="post" enctype="multipart/form-data">
+        <form action="create_user_handler.php" method="post" enctype="multipart/form-data">
             <div class="row">
                 <div class="col-xl-6">
                     <div id="panel-1" class="panel">

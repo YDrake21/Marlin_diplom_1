@@ -64,14 +64,6 @@ $result = $check->fetchall(PDO::FETCH_ASSOC);
             <i class='subheader-icon fal fa-users'></i> Список пользователей
         </h1>
 
-        <style>
-            .uppercase-text {
-                text-transform: uppercase;
-            }
-        </style>
-
-        <span class="uppercase-text">Вывел пользователей из БД, нужно подключить вывод картинок <br> Остановился на пунке 5 файла PDF 3</span>
-
 
     </div>
     <div class="row">
@@ -115,8 +107,10 @@ $result = $check->fetchall(PDO::FETCH_ASSOC);
                                 <a href="javascript:void(0);" class="fs-xl text-truncate text-truncate-lg text-info"
                                    data-toggle="dropdown" aria-expanded="false">
                                     <?php echo $user['name'] ?>
-                                    <i class="fal fas fa-cog fa-fw d-inline-block ml-1 fs-md"></i>
-                                    <i class="fal fa-angle-down d-inline-block ml-1 fs-md"></i>
+                                    <?php if (isset($_SESSION['admin']) || $_SESSION['email'] === $user['email']): ?>
+                                        <i class="fal fas fa-cog fa-fw d-inline-block ml-1 fs-md"></i>
+                                        <i class="fal fa-angle-down d-inline-block ml-1 fs-md"></i>
+                                    <?php endif ?>
                                 </a>
                                 <div class="dropdown-menu">
                                     <a class="dropdown-item" href="edit.html">
@@ -152,14 +146,14 @@ $result = $check->fetchall(PDO::FETCH_ASSOC);
                                class="mt-1 d-block fs-sm fw-400 text-dark">
                                 <i class="fas fa-mobile-alt text-muted mr-2"></i> <?php echo $user['phone_number'] ?>
                             </a>
-                            <a href="<?php if (isset($_SESSION['admin'])) {
-                                echo $user['email'];
-                            } ?>" class="mt-1 d-block fs-sm fw-400 text-dark">
+                            <a href="<?php
+                            echo $user['email'];
+                            ?>" class="mt-1 d-block fs-sm fw-400 text-dark">
                                 <i class="fas fa-mouse-pointer text-muted mr-2"></i> <?php echo $user['email'] ?></a>
                             <address class="fs-sm fw-400 mt-4 text-muted">
-                                <i class="fas fa-map-pin mr-2"></i> <?php if (isset($_SESSION['admin'])) {
-                                    echo $user['location'];
-                                } ?>
+                                <i class="fas fa-map-pin mr-2"></i> <?php
+                                echo $user['location']
+                                ?>
                             </address>
                             <div class="d-flex flex-row">
                                 <a href="javascript:void(0);" class="mr-2 fs-xxl" style="color:#4680C2">
