@@ -78,8 +78,8 @@ function login($email, $password)
 
 /*
  * Работает с множественным выделением
-Передать нужно $_FILES['filename']['name'] || имя файла
-$directory_path = '/Users/YDrake21/Downloads/Погружение/Верстка проекта/images'
+ * Передать нужно $_FILES['filename']['name'] || имя файла
+ * $directory_path = '/Users/YDrake21/Downloads/Погружение/Верстка проекта/images'
 */
 function upload_avatar($filename, $directory_path)
 {
@@ -114,3 +114,36 @@ function upload_avatar($filename, $directory_path)
     }
 
 }
+
+/*
+ * Update SQL values
+ */
+function edit_general_info($id, $name, $workplace, $phone_number, $location)
+{
+    //Connect to DataBase and Update
+    $pdo = new PDO("mysql:host=localhost;dbname=study;", 'root', 'root');
+    $sql = "UPDATE `diplom_1` SET `name`= :name,`workplace`=:workplace,`phone_number`=: phone_number,`location`=: location WHERE `id` =:id ";
+    $check = $pdo->prepare($sql);
+    $check->execute([':id' => $id, ':name' => $name, ':workplace' => $workplace, ':phone_number' => $phone_number, ':location' => $location]);
+
+}
+
+/*
+ * Update SQL value
+ */
+function change_status($id, $status)
+{
+    $pdo = new PDO("mysql:host=localhost;dbname=study;", 'root', 'root');
+    $sql = "UPDATE `diplom_1` SET `status`= :status WHERE `id` =:id ";
+    $check = $pdo->prepare($sql);
+    $check->execute([':id' => $id, ':status' => $status]);
+}
+
+function edit_media_links($id, $vk_link, $tg_link, $insta_link)
+{
+    $pdo = new PDO("mysql:host=localhost;dbname=study;", 'root', 'root');
+    $sql = "UPDATE `diplom_1` SET `vk_link`= :vk_link,`tg_link`=:tg_link,`insta_link`=: insta_link, WHERE `id` =:id ";
+    $check = $pdo->prepare($sql);
+    $check->execute([':vk_link' => $vk_link, ':tg_link' => $tg_link, ':insta_link' => $insta_link, ':id' => $id]);
+}
+

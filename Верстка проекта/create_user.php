@@ -70,13 +70,13 @@ if (!isset($_COOKIE['user_id']) or (!isset($_SESSION['admin']))) {
                                 <!-- username -->
                                 <div class="form-group">
                                     <label class="form-label" for="simpleinput">Имя</label>
-                                    <input type="text" id="simpleinput" name="username"  class="form-control">
+                                    <input type="text" id="simpleinput" name="name"  class="form-control">
                                 </div>
 
                                 <!-- title -->
                                 <div class="form-group">
                                     <label class="form-label" for="simpleinput">Место работы</label>
-                                    <input type="text" id="simpleinput" name="job" class="form-control">
+                                    <input type="text" id="simpleinput" name="workplace" class="form-control">
                                 </div>
 
                                 <!-- tel -->
@@ -88,7 +88,7 @@ if (!isset($_COOKIE['user_id']) or (!isset($_SESSION['admin']))) {
                                 <!-- address -->
                                 <div class="form-group">
                                     <label class="form-label" for="simpleinput">Адрес</label>
-                                    <input type="text" id="simpleinput" name="address" class="form-control">
+                                    <input type="text" id="simpleinput" name="location" class="form-control">
                                 </div>
                             </div>
                         </div>
@@ -118,10 +118,10 @@ if (!isset($_COOKIE['user_id']) or (!isset($_SESSION['admin']))) {
                                 <!-- status -->
                                 <div class="form-group">
                                     <label class="form-label" for="example-select">Выберите статус</label>
-                                    <select class="form-control" id="example-select" name="select">
-                                        <option>Онлайн</option>
-                                        <option>Отошел</option>
-                                        <option>Не беспокоить</option>
+                                    <select class="form-control" id="example-select" name="status">
+                                        <option value="success">Онлайн</option>
+                                        <option value="warning">Отошел</option>
+                                        <option value="danger">Не беспокоить</option>
                                     </select>
                                 </div>
 
