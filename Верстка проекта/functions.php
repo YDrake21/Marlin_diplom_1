@@ -78,42 +78,36 @@ function login($email, $password)
 
 /*
  * Работает с множественным выделением
- * Передать нужно $_FILES['filename']['name'] || имя файла
+ * Передать нужно $_FILES['avatar'] || имя файла
  * $directory_path = '/Users/YDrake21/Downloads/Погружение/Верстка проекта/images'
 */
-function upload_avatar($filename, $directory_path)
+function upload_avatar($id, $filename, $directory_path)
 {
 
-    foreach ($filename as $key => $file_name) {
-        $tmp_name = $_FILES['filename']['tmp_name'][$key];
-        $error = $_FILES['filename']['error'][$key];
-//Если возникнет ошибка - покажет ее код
-        if ($error !== UPLOAD_ERR_OK) {
-            echo "Ошибка загрузки файла: " . $error;
-        }
 
-// Удаляем лишние точки, запятые и тд
-        $old_name = pathinfo($file_name);
-        $str_delete = str_replace(['-', '_', ',', '.', ' ', '(', ')'], '', $old_name['filename']);
-// Переопределяем имя файла
-        $new_filename = uniqid($str_delete) . "." . $old_name['extension'];
+    // Обработка имени файла
+    $old_name = pathinfo($filename['name']);
+    $str_delete = str_replace(['-', '_', ',', '.', ' ', '(', ')'], '', $old_name['filename']);
+    $new_filename = uniqid($str_delete) . "." . $old_name['extension'];
 
-// Загружаем в указанную папку
-        $target_file = $directory_path . $new_filename;
-        if (move_uploaded_file($tmp_name, $target_file)) {
-            echo "Ok";
-        } else echo "Error";
+    // Путь к файлу
+    $target_file = $directory_path . $new_filename;
 
-// Connect to DataBase
-        $pdo = new PDO("mysql:host=localhost;dbname=study;", 'root', 'root');
+    // Перемещаем файл в указанную папку
+    move_uploaded_file($filename['tmp_name'], $target_file);
 
-// Prepare a database query
-        $sql = "INSERT INTO `diplom_1` (`avatar`) VALUES (:File_name)";
-        $check = $pdo->prepare($sql);
-        $check->execute([':File_name' => $new_filename]);
-    }
 
+    // Подключение к базе данных
+    $pdo = new PDO("mysql:host=localhost;dbname=study;", 'root', 'root');
+
+    // Подготовка запроса к базе данных
+    $sql = "UPDATE `diplom_1` SET `avatar`= :File_name WHERE `id` =:id ";
+    $check = $pdo->prepare($sql);
+
+    // Выполнение запроса с использованием имени файла
+    $check->execute([':File_name' => $new_filename, ':id' => $id]);
 }
+
 
 /*
  * Update SQL values
@@ -122,7 +116,7 @@ function edit_general_info($id, $name, $workplace, $phone_number, $location)
 {
     //Connect to DataBase and Update
     $pdo = new PDO("mysql:host=localhost;dbname=study;", 'root', 'root');
-    $sql = "UPDATE `diplom_1` SET `name`= :name,`workplace`=:workplace,`phone_number`=: phone_number,`location`=: location WHERE `id` =:id ";
+    $sql = "UPDATE `diplom_1` SET `name`= :name,`workplace`=:workplace,`phone_number`=:phone_number,`location`=:location WHERE `id` =:id ";
     $check = $pdo->prepare($sql);
     $check->execute([':id' => $id, ':name' => $name, ':workplace' => $workplace, ':phone_number' => $phone_number, ':location' => $location]);
 
@@ -142,7 +136,7 @@ function change_status($id, $status)
 function edit_media_links($id, $vk_link, $tg_link, $insta_link)
 {
     $pdo = new PDO("mysql:host=localhost;dbname=study;", 'root', 'root');
-    $sql = "UPDATE `diplom_1` SET `vk_link`= :vk_link,`tg_link`=:tg_link,`insta_link`=: insta_link, WHERE `id` =:id ";
+    $sql = "UPDATE `diplom_1` SET `vk`= :vk_link,`tg`=:tg_link,`insta`=:insta_link WHERE `id` =:id ";
     $check = $pdo->prepare($sql);
     $check->execute([':vk_link' => $vk_link, ':tg_link' => $tg_link, ':insta_link' => $insta_link, ':id' => $id]);
 }

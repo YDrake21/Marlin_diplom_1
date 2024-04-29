@@ -56,9 +56,14 @@ $result = $check->fetchall(PDO::FETCH_ASSOC);
 </nav>
 
 <main id="js-page-content" role="main" class="page-content mt-3">
-    <div class="alert alert-success">
+    <?php if (isset($_SESSION['message'])): ?>
 
+    <div class="alert alert-success">
+        <?php echo $_SESSION['message'] ?>
+        <?php unset($_SESSION['message']) ?>
+        <?php endif ?>
     </div>
+
     <div class="subheader">
         <h1 class="subheader-title">
             <i class='subheader-icon fal fa-users'></i> Список пользователей
@@ -101,7 +106,7 @@ $result = $check->fetchall(PDO::FETCH_ASSOC);
                         <div class="d-flex flex-row align-items-center">
                                 <span class="status status-<?php echo $user['status'] ?> mr-3">
                                     <span class="rounded-circle profile-image d-block "
-                                          style="background-image:url('img/demo/avatars/<?php echo $user['avatar'] ?>'); background-size: cover;"></span>
+                                          style="background-image:url('images/<?php echo $user['avatar'] ?>'); background-size: cover;"></span>
                                 </span>
                             <div class="info-card-text flex-1">
                                 <a href="javascript:void(0);" class="fs-xl text-truncate text-truncate-lg text-info"
