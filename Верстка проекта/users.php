@@ -1,9 +1,9 @@
-<!-- Если не залогинен - на страницу логина -->
-<?php session_start() ?>
-<?php if (!isset($_COOKIE['user_id'])) {
-    header("location: page_login.php");
-    exit;
-} ?>
+<?php session_start();
+require_once 'functions.php';
+?>
+
+<!-- Если не авторизован - на страницу авторизации -->
+<?php is_authorized($_COOKIE['user_id'], "page_login.pnp"); ?>
 <!-- Connect to DataBase -->
 <?php
 $pdo = new PDO("mysql:host=localhost;dbname=study;", 'root', 'root');
@@ -75,7 +75,7 @@ $result = $check->fetchall(PDO::FETCH_ASSOC);
         <div class="col-xl-12">
             <!--If ADMIN {show "Добавить" button}  -->
 
-            <?php if (isset($_SESSION['admin'])): ?>
+            <?php if (is_admin($_COOKIE['user_id'], $_SESSION['admin_id'])): ?>
 
                 <a class="btn btn-success" href="create_user.php">Добавить</a>
 
@@ -98,7 +98,7 @@ $result = $check->fetchall(PDO::FETCH_ASSOC);
     </div>
     <div class="row" id="js-contacts">
         <!-- Start Profile Card -->
-        <?php foreach ($result as $user): ?>
+        <?php foreach ($result as $user):?>
             <div class="col-xl-4">
                 <div id="c_1" class="card border shadow-0 mb-g shadow-sm-hover"
                      data-filter-tags="<?php echo $user['name'] ?>">
@@ -112,16 +112,16 @@ $result = $check->fetchall(PDO::FETCH_ASSOC);
                                 <a href="javascript:void(0);" class="fs-xl text-truncate text-truncate-lg text-info"
                                    data-toggle="dropdown" aria-expanded="false">
                                     <?php echo $user['name'] ?>
-                                    <?php if (isset($_SESSION['admin']) || $_SESSION['email'] === $user['email']): ?>
+                                    <?php if (is_admin($_COOKIE['user_id'], $_SESSION['admin_id']) == 'success' || $_SESSION['email'] === $user['email']): ?>
                                         <i class="fal fas fa-cog fa-fw d-inline-block ml-1 fs-md"></i>
                                         <i class="fal fa-angle-down d-inline-block ml-1 fs-md"></i>
                                     <?php endif ?>
                                 </a>
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="edit.html">
+                                    <a class="dropdown-item" href="edit.php?id=<?php echo $user['id']?>">
                                         <i class="fa fa-edit"></i>
                                         Редактировать</a>
-                                    <a class="dropdown-item" href="security.html">
+                                    <a class="dropdown-item"  href="security.html">
                                         <i class="fa fa-lock"></i>
                                         Безопасность</a>
                                     <a class="dropdown-item" href="status.html">

@@ -46,8 +46,7 @@ function login($email, $password)
     $check->execute([':email' => $email]);
     $result = $check->fetch(PDO::FETCH_ASSOC);
 
-    // If email exist -> compare password and hashed_password:
-
+    // Если email существует в БД -> сравнивает password and hashed_password:
     // login success
     if (isset($result['email'])) {
         //Set $_SESSION['email'] to display that user's email
@@ -57,7 +56,7 @@ function login($email, $password)
             setcookie('user_id', $result['id'], time() + 3600, '/'); // The cookie is valid for 1 hour
             // Set $_SESSION['admin'] if admin
             if (($result['is_admin']) === 'admin') {
-                $_SESSION['admin'] = true;
+                $_SESSION['admin_id'] = $result['id'];
                 return "success_admin";
 
             }
@@ -133,6 +132,9 @@ function change_status($id, $status)
     $check->execute([':id' => $id, ':status' => $status]);
 }
 
+/*
+ * Update SQL values
+ */
 function edit_media_links($id, $vk_link, $tg_link, $insta_link)
 {
     $pdo = new PDO("mysql:host=localhost;dbname=study;", 'root', 'root');
@@ -141,3 +143,31 @@ function edit_media_links($id, $vk_link, $tg_link, $insta_link)
     $check->execute([':vk_link' => $vk_link, ':tg_link' => $tg_link, ':insta_link' => $insta_link, ':id' => $id]);
 }
 
+
+/*
+ * Проверяет авторизован ли пользователь. Если нет - перенаправляет на указанную страницу ($location)
+ * $location указывается как "page_login.php" или другая страница, на которую нужно редиректить
+ */
+function is_authorized($id, $location)
+{
+    if (!isset($id)) {
+        header("location:$location");
+        exit;
+    }
+}
+
+function is_admin($user_id, $admin_id)
+{
+    if (isset($admin_id)) {
+        if ($user_id == $admin_id) {
+            return "success";
+        }
+    }
+}
+
+function dd($value)
+{
+    echo "<pre>";
+    var_dump($value);
+    echo "</pre>";
+}
