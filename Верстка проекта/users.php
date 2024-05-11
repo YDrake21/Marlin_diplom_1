@@ -3,7 +3,7 @@ require_once 'functions.php';
 ?>
 
 <!-- Если не авторизован - на страницу авторизации -->
-<?php is_authorized($_COOKIE['user_id'], "page_login.pnp"); ?>
+<?php is_authorized($_SESSION['email'], "page_login.php"); ?>
 <!-- Connect to DataBase -->
 <?php
 $pdo = new PDO("mysql:host=localhost;dbname=study;", 'root', 'root');
@@ -12,8 +12,9 @@ $check = $pdo->prepare($sql);
 $check->execute();
 $result = $check->fetchall(PDO::FETCH_ASSOC);
 
+
 ?>
-<!-- Connect to DataBase -->
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -49,12 +50,18 @@ $result = $check->fetchall(PDO::FETCH_ASSOC);
                 <a class="nav-link" href="page_login.php">Войти</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Выйти</a>
+                <a class="nav-link" href="logout_handler.php">Выйти</a>
             </li>
         </ul>
     </div>
 </nav>
+<?php if (isset($_SESSION['message'])): ?>
 
+    <!--Flash-message if registration Success -->
+    <div class="alert alert-success">
+        <?php echo $_SESSION['message'] ?>
+    </div>
+    <?php unset($_SESSION['message']); endif; ?>
 <main id="js-page-content" role="main" class="page-content mt-3">
     <?php if (isset($_SESSION['message'])): ?>
 
@@ -66,7 +73,9 @@ $result = $check->fetchall(PDO::FETCH_ASSOC);
 
     <div class="subheader">
         <h1 class="subheader-title">
-            <i class='subheader-icon fal fa-users'></i> Список пользователей
+            <i class='subheader-icon fal fa-users'></i> Список пользователей <br>
+            <i></i> <span style="color: rgba(215,1,6,0.84);"> Hello, </span>
+            <i></i> <span style="color: rgb(255,215,0);"> <?php echo $_SESSION['name'] ?> </span>
         </h1>
 
 
@@ -98,7 +107,7 @@ $result = $check->fetchall(PDO::FETCH_ASSOC);
     </div>
     <div class="row" id="js-contacts">
         <!-- Start Profile Card -->
-        <?php foreach ($result as $user):?>
+        <?php foreach ($result as $user): ?>
             <div class="col-xl-4">
                 <div id="c_1" class="card border shadow-0 mb-g shadow-sm-hover"
                      data-filter-tags="<?php echo $user['name'] ?>">
@@ -118,15 +127,18 @@ $result = $check->fetchall(PDO::FETCH_ASSOC);
                                     <?php endif ?>
                                 </a>
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="edit.php?id=<?php echo $user['id']?>">
+                                    <a class="dropdown-item" href="edit.php?id=<?php echo $user['id'] ?>">
                                         <i class="fa fa-edit"></i>
                                         Редактировать</a>
-                                    <a class="dropdown-item"  href="security.html">
+                                    <a class="dropdown-item" href="security.php?id=<?php echo $user['id'] ?>">
                                         <i class="fa fa-lock"></i>
                                         Безопасность</a>
                                     <a class="dropdown-item" href="status.html">
                                         <i class="fa fa-sun"></i>
                                         Установить статус</a>
+                                    <a class="dropdown-item" href="page_profile.php?id=<?php echo $user['id'] ?>">
+                                        <i class="fa fa-sun"></i>
+                                        Профиль</a>
                                     <a class="dropdown-item" href="media.html">
                                         <i class="fa fa-camera"></i>
                                         Загрузить аватар

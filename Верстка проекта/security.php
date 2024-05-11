@@ -1,31 +1,23 @@
 <?php session_start();
 require_once 'functions.php';
-
-// Проверяем, установлено ли значение 'id' в GET-запросе
-if (!isset($_GET['id'])) {
-    echo "ID не указан!";
-    exit;
-}
-// Проверка: админ ли планирует редактировать пользователя или нет?
-if ($_GET['id'] != $_COOKIE['user_id']) {
-    if (is_admin($_COOKIE['user_id'], $_SESSION['admin_id']) !== 'success') {
-        echo "ID не соответствует!";
-        exit;
-    }
-}
 ?>
-
+<!-- Connect to DataBase -->
+<?php
+$pdo = new PDO("mysql:host=localhost;dbname=study;", 'root', 'root');
+$sql = "SELECT * FROM `diplom_1` WHERE `id` =:id";
+$check = $pdo->prepare($sql);
+$check->execute([':id' => $_GET['id']]);
+$result = $check->fetch(PDO::FETCH_ASSOC);
+?>
 <!-- Проверка авторизован ли пользователь -->
 <?php
 is_authorized($_COOKIE['user_id'], "page_login.php");
 ?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Document</title>
+    <title>Безопаность</title>
     <meta name="description" content="Chartist.html">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no, minimal-ui">
@@ -63,61 +55,35 @@ is_authorized($_COOKIE['user_id'], "page_login.php");
 <main id="js-page-content" role="main" class="page-content mt-3">
     <div class="subheader">
         <h1 class="subheader-title">
-            <i class='subheader-icon fal fa-plus-circle'></i> Редактировать
+            <i class='subheader-icon fal fa-lock'></i> Безопасность
         </h1>
 
     </div>
-    <form action="edit_handler.php" method="post">
+    <form action="">
         <div class="row">
             <div class="col-xl-6">
                 <div id="panel-1" class="panel">
                     <div class="panel-container">
                         <div class="panel-hdr">
-                            <h2>Общая информация</h2>
+                            <h2>Обновление эл. адреса и пароля</h2>
                         </div>
-                        <!-- Ищем в БД данные для заполнения форм -->
-                        <?php
-                        $pdo = new PDO("mysql:host=localhost;dbname=study;", 'root', 'root');
-                        $sql = "SELECT `name`,`workplace`, `phone_number`, `location` FROM `diplom_1` WHERE `id` =:id ";
-                        $check = $pdo->prepare($sql);
-                        $check->execute([':id' => $_GET['id']]);
-                        $result = $check->fetch(PDO::FETCH_ASSOC);
-                        ?>
-
-
                         <div class="panel-content">
-                            <!-- Добавляем скрытое поле для передачи ID пользователя -->
-                            <input type="hidden" name="user_id" value="<?php echo $_GET['id']; ?>">
-
-                            <!-- username -->
+                            <!-- email -->
                             <div class="form-group">
-                                <label class="form-label" for="simpleinput">Имя</label>
-                                <input type="text" id="simpleinput" class="form-control" name="name"
-                                       value="<?php echo $result['name'] ?>">
+                                <label class="form-label" for="simpleinput">Email</label>
+                                <input type="text" id="simpleinput" class="form-control"
+                                       value="<?php echo $result['email'] ?>">
                             </div>
 
-                            <!-- title -->
+                            <!-- password -->
                             <div class="form-group">
-                                <label class="form-label" for="simpleinput">Место работы</label>
-                                <input type="text" id="simpleinput" class="form-control" name="workplace"
-                                       value="<?php echo $result['workplace'] ?>">
+                                <label class="form-label" for="simpleinput">Пароль</label>
+                                <input type="password" id="simpleinput" class="form-control">
                             </div>
 
-                            <!-- tel -->
-                            <div class="form-group">
-                                <label class="form-label" for="simpleinput">Номер телефона</label>
-                                <input type="text" id="simpleinput" class="form-control" name="phone_number"
-                                       value="<?php echo $result['phone_number'] ?>">
-                            </div>
 
-                            <!-- address -->
-                            <div class="form-group">
-                                <label class="form-label" for="simpleinput">Адрес</label>
-                                <input type="text" id="simpleinput" class="form-control" name="location"
-                                       value="<?php echo $result['location'] ?>">
-                            </div>
                             <div class="col-md-12 mt-3 d-flex flex-row-reverse">
-                                <button class="btn btn-warning">Редактировать</button>
+                                <button class="btn btn-warning">Изменить</button>
                             </div>
                         </div>
                     </div>

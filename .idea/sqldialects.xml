@@ -4,6 +4,7 @@
     <file url="file://$PROJECT_DIR$/Верстка проекта/edit.php" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/Верстка проекта/functions.php" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/Верстка проекта/page_login_handler.php" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/Верстка проекта/page_profile.php" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/Верстка проекта/page_register_handler.php" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/Верстка проекта/users.php" dialect="GenericSQL" />
   </component>

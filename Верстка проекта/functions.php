@@ -36,12 +36,13 @@ function register_user($email, $password)
 2.  "success_user" - если залогинился user
 3.  "password_incorrect" - если пароль неверный
 4.  "email_incorrect" - если email неверный
+5. set $_COOKIE['user_id']
 */
 function login($email, $password)
 {
     // Search email in BD
     $pdo = new PDO("mysql:host=localhost;dbname=study;", 'root', 'root');
-    $sql = "SELECT `id`,`email`, `password`, `is_admin` FROM `diplom_1` WHERE `email` =:email";
+    $sql = "SELECT `id`,`email`, `password`, `is_admin`, `name` FROM `diplom_1` WHERE `email` =:email";
     $check = $pdo->prepare($sql);
     $check->execute([':email' => $email]);
     $result = $check->fetch(PDO::FETCH_ASSOC);
@@ -51,6 +52,7 @@ function login($email, $password)
     if (isset($result['email'])) {
         //Set $_SESSION['email'] to display that user's email
         $_SESSION['email'] = $result['email'];
+        $_SESSION['name'] = $result['name'];
         if (password_verify($password, $result['password'])) {
             // Set COOKIE to Logged-in user
             setcookie('user_id', $result['id'], time() + 3600, '/'); // The cookie is valid for 1 hour
@@ -73,6 +75,11 @@ function login($email, $password)
     } else $_SESSION['message'] = "Incorrect email";
     $_SESSION['color'] = "danger";
     return "email_incorrect";
+}
+
+function logout(){
+    unset($_SESSION['email']);
+    header('location: page_login.php');
 }
 
 /*
@@ -119,6 +126,7 @@ function edit_general_info($id, $name, $workplace, $phone_number, $location)
     $check = $pdo->prepare($sql);
     $check->execute([':id' => $id, ':name' => $name, ':workplace' => $workplace, ':phone_number' => $phone_number, ':location' => $location]);
 
+
 }
 
 /*
@@ -148,9 +156,9 @@ function edit_media_links($id, $vk_link, $tg_link, $insta_link)
  * Проверяет авторизован ли пользователь. Если нет - перенаправляет на указанную страницу ($location)
  * $location указывается как "page_login.php" или другая страница, на которую нужно редиректить
  */
-function is_authorized($id, $location)
+function is_authorized($session_email, $location)
 {
-    if (!isset($id)) {
+    if (!isset($session_email)) {
         header("location:$location");
         exit;
     }
