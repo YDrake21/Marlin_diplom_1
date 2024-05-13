@@ -1,14 +1,6 @@
 <?php session_start();
 require_once 'functions.php';
 ?>
-<!-- Connect to DataBase -->
-<?php
-$pdo = new PDO("mysql:host=localhost;dbname=study;", 'root', 'root');
-$sql = "SELECT * FROM `diplom_1` WHERE `id` =:id";
-$check = $pdo->prepare($sql);
-$check->execute([':id' => $_GET['id']]);
-$result = $check->fetch(PDO::FETCH_ASSOC);
-?>
 <!-- Проверка авторизован ли пользователь -->
 <?php
 is_authorized($_COOKIE['user_id'], "page_login.php");
@@ -22,8 +14,8 @@ if (!isset($_GET['id'])) {
 // Проверка: админ ли планирует редактировать пользователя или нет?
 if ($_GET['id'] != $_COOKIE['user_id']) {
     if (is_admin($_COOKIE['user_id'], $_SESSION['admin_id']) !== 'success') {
-        echo "ID не соответствует!";
-        exit;
+        flash_message('Редактировать можно только свой профиль', 'danger');
+        header("location: users.php");
     }
 }
 ?>
@@ -31,7 +23,7 @@ if ($_GET['id'] != $_COOKIE['user_id']) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Безопаность</title>
+    <title>Document</title>
     <meta name="description" content="Chartist.html">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no, minimal-ui">
@@ -53,7 +45,7 @@ if ($_GET['id'] != $_COOKIE['user_id']) {
     <div class="collapse navbar-collapse" id="navbarColor02">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link" href="users.php">Главная <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="#">Главная <span class="sr-only">(current)</span></a>
             </li>
         </ul>
         <ul class="navbar-nav ml-auto">
@@ -69,37 +61,42 @@ if ($_GET['id'] != $_COOKIE['user_id']) {
 <main id="js-page-content" role="main" class="page-content mt-3">
     <div class="subheader">
         <h1 class="subheader-title">
-            <i class='subheader-icon fal fa-lock'></i> Безопасность
+            <i class='subheader-icon fal fa-sun'></i> Установить статус
         </h1>
 
     </div>
-    <form action="security_handler.php" method="post">
+    <form action="status.handler.php" method="post">
         <div class="row">
             <div class="col-xl-6">
                 <div id="panel-1" class="panel">
                     <div class="panel-container">
                         <div class="panel-hdr">
-                            <h2>Обновление эл. адреса и пароля</h2>
+                            <h2>Установка текущего статуса</h2>
                         </div>
                         <div class="panel-content">
-                            <!-- Добавляем скрытое поле для передачи ID пользователя -->
-                            <input type="hidden" name="user_id" value="<?php echo $_GET['id']; ?>">
-                            <!-- email -->
-                            <div class="form-group">
-                                <label class="form-label" for="simpleinput">Email</label>
-                                <input type="text" id="simpleinput" name="email" class="form-control"
-                                       value="<?php echo $result['email'] ?>">
-                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <!-- status -->
+                                    <div class="form-group">
+                                        <label class="form-label" for="example-select">Выберите статус</label>
+                                        <input type="hidden" name="id" value="<?php echo $_GET['id']; ?>">
+                                        <select class="form-control" name="status" id="example-select">
+                                            <option <?php if ($_GET['status'] === 'success') echo 'selected'; ?>
+                                                    value="success">Онлайн
+                                            </option>
+                                            <option <?php if ($_GET['status'] === 'warning') echo 'selected'; ?>
+                                                    value="warning">Отошел
+                                            </option>
+                                            <option <?php if ($_GET['status'] === 'danger') echo 'selected'; ?>
+                                                    value="danger">Не беспокоить
+                                            </option>
+                                        </select>
 
-                            <!-- password -->
-                            <div class="form-group">
-                                <label class="form-label" for="simpleinput">Пароль</label>
-                                <input type="password" id="simpleinput" name="password" class="form-control">
-                            </div>
-
-
-                            <div class="col-md-12 mt-3 d-flex flex-row-reverse">
-                                <button class="btn btn-warning">Изменить</button>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 mt-3 d-flex flex-row-reverse">
+                                    <button class="btn btn-warning">Set Status</button>
+                                </div>
                             </div>
                         </div>
                     </div>

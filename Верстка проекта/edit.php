@@ -6,6 +6,7 @@ if (!isset($_GET['id'])) {
     echo "ID не указан!";
     exit;
 }
+
 // Проверка: админ ли планирует редактировать пользователя или нет?
 if ($_GET['id'] != $_COOKIE['user_id']) {
     if (is_admin($_COOKIE['user_id'], $_SESSION['admin_id']) !== 'success') {
@@ -14,7 +15,6 @@ if ($_GET['id'] != $_COOKIE['user_id']) {
     }
 }
 ?>
-
 <!-- Проверка авторизован ли пользователь -->
 <?php
 is_authorized($_COOKIE['user_id'], "page_login.php");

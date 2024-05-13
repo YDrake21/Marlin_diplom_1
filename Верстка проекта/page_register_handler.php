@@ -5,8 +5,7 @@ require_once 'functions.php';
 $result = register_user($_POST['email'], $_POST['password']);
 
 if (is_int($result)) {
-    $_SESSION['message'] = 'Регистрация успешна';
-    $_SESSION['color'] = 'success';
+    flash_message('Регистрация успешна', 'success');
     header("location: page_login.php");
 } else if ($result == 'Email exists') {
     $_SESSION['message'] = "<strong>Уведомление!</strong> Этот эл. адрес уже занят другим пользователем.";

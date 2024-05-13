@@ -2,11 +2,11 @@
 <!-- Если не залогинен - на страницу логина -->
 <?php
 session_start();
-if (!isset($_COOKIE['user_id']) or (!isset($_SESSION['admin']))) {
-    header("location: page_login.php");
-    exit;
+require_once 'functions.php';
+//Если не авторизован - на страницу авторизации
+is_authorized($_SESSION['email'], 'page_login.php');
 
-}
+
 ?>
 <html lang="en">
 <head>

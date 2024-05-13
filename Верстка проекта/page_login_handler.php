@@ -1,6 +1,5 @@
 <?php
 session_start();
-
 require_once 'functions.php';
 
 $result = login($_POST['email'], $_POST['password']);

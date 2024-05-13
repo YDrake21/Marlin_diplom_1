@@ -1,5 +1,6 @@
 <?php session_start();
 require_once 'functions.php';
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -41,6 +42,17 @@ require_once 'functions.php';
         </ul>
     </div>
 </nav>
+<!--Флеш сообщение если логин/пароль изменился/занят -->
+<?php if (isset($_SESSION['message'])): ?>
+<div class="alert alert-<?php echo $_SESSION['color'] ?>">
+
+    <?php echo $_SESSION['message']?>
+    <?php unset($_SESSION['message']);?>
+    <?php unset($_SESSION['color']);?>
+
+</div>
+<?php endif ?>
+
 <!-- Connect to DataBase -->
 <?php
 $pdo = new PDO("mysql:host=localhost;dbname=study;", 'root', 'root');
@@ -62,6 +74,9 @@ $result = $check->fetch(PDO::FETCH_ASSOC);
                 <div class="row no-gutters row-grid">
                     <div class="col-12">
                         <div class="d-flex flex-column align-items-center justify-content-center p-4">
+                            <?php if ($result['avatar'] == "") {
+                                $result['avatar'] = 'avatar-m.png';
+                            } ?>
                             <img src="images/<?php echo $result['avatar'] ?>"
                                  class="rounded-circle shadow-2 img-thumbnail" alt="" width="100" height="100">
                             <h5 class="mb-0 fw-700 text-center mt-3">

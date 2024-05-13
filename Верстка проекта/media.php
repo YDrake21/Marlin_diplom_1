@@ -1,19 +1,10 @@
 <?php session_start();
 require_once 'functions.php';
-?>
-<!-- Connect to DataBase -->
-<?php
-$pdo = new PDO("mysql:host=localhost;dbname=study;", 'root', 'root');
-$sql = "SELECT * FROM `diplom_1` WHERE `id` =:id";
-$check = $pdo->prepare($sql);
-$check->execute([':id' => $_GET['id']]);
-$result = $check->fetch(PDO::FETCH_ASSOC);
-?>
-<!-- Проверка авторизован ли пользователь -->
-<?php
+
+
+//Проверка авторизован ли пользователь
 is_authorized($_COOKIE['user_id'], "page_login.php");
-?>
-<?php
+
 // Проверяем, установлено ли значение 'id' в GET-запросе
 if (!isset($_GET['id'])) {
     echo "ID не указан!";
@@ -22,16 +13,24 @@ if (!isset($_GET['id'])) {
 // Проверка: админ ли планирует редактировать пользователя или нет?
 if ($_GET['id'] != $_COOKIE['user_id']) {
     if (is_admin($_COOKIE['user_id'], $_SESSION['admin_id']) !== 'success') {
-        echo "ID не соответствует!";
-        exit;
+        flash_message('Можно редактировать только свой профиль', 'danger');
+        header("location: users.php");
     }
 }
+//Connect to DataBase
+$pdo = new PDO("mysql:host=localhost;dbname=study;", 'root', 'root');
+$sql = "SELECT * FROM `diplom_1` WHERE `id` =:id";
+$check = $pdo->prepare($sql);
+$check->execute([':id' => $_GET['id']]);
+$result = $check->fetch(PDO::FETCH_ASSOC);
+
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Безопаность</title>
+    <title>Document</title>
     <meta name="description" content="Chartist.html">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no, minimal-ui">
@@ -61,7 +60,7 @@ if ($_GET['id'] != $_COOKIE['user_id']) {
                 <a class="nav-link" href="page_login.php">Войти</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Выйти</a>
+                <a class="nav-link" href="logout_handler.php">Выйти</a>
             </li>
         </ul>
     </div>
@@ -69,41 +68,40 @@ if ($_GET['id'] != $_COOKIE['user_id']) {
 <main id="js-page-content" role="main" class="page-content mt-3">
     <div class="subheader">
         <h1 class="subheader-title">
-            <i class='subheader-icon fal fa-lock'></i> Безопасность
+            <i class='subheader-icon fal fa-image'></i> Загрузить аватар
         </h1>
 
     </div>
-    <form action="security_handler.php" method="post">
+    <form action="media_handler.php" enctype="multipart/form-data" method="post">
+
         <div class="row">
             <div class="col-xl-6">
                 <div id="panel-1" class="panel">
                     <div class="panel-container">
                         <div class="panel-hdr">
-                            <h2>Обновление эл. адреса и пароля</h2>
+                            <h2>Текущий аватар</h2>
                         </div>
                         <div class="panel-content">
-                            <!-- Добавляем скрытое поле для передачи ID пользователя -->
-                            <input type="hidden" name="user_id" value="<?php echo $_GET['id']; ?>">
-                            <!-- email -->
                             <div class="form-group">
-                                <label class="form-label" for="simpleinput">Email</label>
-                                <input type="text" id="simpleinput" name="email" class="form-control"
-                                       value="<?php echo $result['email'] ?>">
+                                <?php if ($result['avatar'] == "") {
+                                    $result['avatar'] = 'avatar-m.png';
+                                } ?>
+                                <img src='images/<?php echo $result['avatar'] ?>' alt="" class="img-responsive"
+                                     width="200">
                             </div>
 
-                            <!-- password -->
                             <div class="form-group">
-                                <label class="form-label" for="simpleinput">Пароль</label>
-                                <input type="password" id="simpleinput" name="password" class="form-control">
+                                <label class="form-label" for="example-fileinput">Выберите аватар</label>
+                                <input type="file" name="avatar" id="example-fileinput" class="form-control-file">
                             </div>
 
 
                             <div class="col-md-12 mt-3 d-flex flex-row-reverse">
-                                <button class="btn btn-warning">Изменить</button>
+                                <input type="hidden" name="id" value="<?php echo $_GET['id'] ?>">
+                                <button class="btn btn-warning">Загрузить</button>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>

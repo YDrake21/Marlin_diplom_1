@@ -1,4 +1,8 @@
 <?php
+function connect_to_db() {
+    $pdo = new PDO("mysql:host=localhost;dbname=study;", 'root', 'root');
+    return $pdo;
+} // пока без нее сделаю
 /*
 Если создаст нового пользователя - вернет его id из БД
 Если email занят - вернет "Email exists"
@@ -50,15 +54,16 @@ function login($email, $password)
     // Если email существует в БД -> сравнивает password and hashed_password:
     // login success
     if (isset($result['email'])) {
-        //Set $_SESSION['email'] to display that user's email
-        $_SESSION['email'] = $result['email'];
-        $_SESSION['name'] = $result['name'];
         if (password_verify($password, $result['password'])) {
+            //Set $_SESSION['email'] to display that user's email
+            $_SESSION['email'] = $result['email'];
+            $_SESSION['name'] = $result['name'];
             // Set COOKIE to Logged-in user
             setcookie('user_id', $result['id'], time() + 3600, '/'); // The cookie is valid for 1 hour
             // Set $_SESSION['admin'] if admin
             if (($result['is_admin']) === 'admin') {
                 $_SESSION['admin_id'] = $result['id'];
+                $_SESSION['admin_name'] = $result['name'];
                 return "success_admin";
 
             }
@@ -79,13 +84,14 @@ function login($email, $password)
 
 function logout(){
     unset($_SESSION['email']);
+    unset($_SESSION['name']);
     header('location: page_login.php');
 }
 
 /*
  * Работает с множественным выделением
- * Передать нужно $_FILES['avatar'] || имя файла
- * $directory_path = '/Users/YDrake21/Downloads/Погружение/Верстка проекта/images'
+ * Передать нужно $_FILES['avatar'] или имя файла, введенное в форме вместо ['avatar']
+ * $directory_path = '/Users/YDrake21/Downloads/Погружение/Верстка проекта/images/'
 */
 function upload_avatar($id, $filename, $directory_path)
 {
@@ -126,8 +132,15 @@ function edit_general_info($id, $name, $workplace, $phone_number, $location)
     $check = $pdo->prepare($sql);
     $check->execute([':id' => $id, ':name' => $name, ':workplace' => $workplace, ':phone_number' => $phone_number, ':location' => $location]);
 
-
 }
+
+function security_edit($id, $email, $password){
+    //Connect to DataBase and Update
+    $pdo = new PDO("mysql:host=localhost;dbname=study;", 'root', 'root');
+    $sql = "UPDATE `diplom_1` SET `email`= :email,`password`=:password WHERE `id` =:id ";
+    $pdo->prepare($sql)->execute([':id' => $id, ':email' => $email, ':password' => $password]);
+}
+
 
 /*
  * Update SQL value
@@ -179,3 +192,26 @@ function dd($value)
     var_dump($value);
     echo "</pre>";
 }
+
+function set_status($id, $status)
+{
+    $pdo = new PDO("mysql:host=localhost;dbname=study;", 'root', 'root');
+    $sql = "UPDATE `diplom_1` SET `status`= :status WHERE `id` =:id ";
+    $pdo->prepare($sql)->execute([':status' => $status, ':id' => $id]);
+}
+
+function flash_message($message, $status){
+    $_SESSION['message'] = "$message";
+    $_SESSION['color'] = "$status";
+}
+/*
+ * Проверяет, установлено ли значение 'id' в GET-запросе
+ */
+function isset_id($id)
+{
+    if (!isset($_GET["$id"])) {
+        echo "ID не указан!";
+        exit;
+    }
+}
+
